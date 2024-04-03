@@ -424,7 +424,6 @@
             "disable_default_error_pages": false,
             "cookies_to_modify": []
         },
-        "user_identification": {},
         "api_rate_limit": {
             "no_ip_allowed_list": {},
             "server_url_rules": [],
