@@ -1,55 +1,82 @@
 name: CI
 
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  deploy:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Install jq
+      run: sudo apt-get install jq    
+
     - name: Determine HTTP Method
       run: |
-        URL="${{ secrets.API_ENDPOINT }}/object/identifier" # Adjust endpoint
-        RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" -X GET "$URL")
-        if [ "$RESPONSE_CODE" -eq 404 ]; then
+        LB_NAME=$(jq -r '.metadata.name' loadbalancer.json)
+        echo "LB_NAME=$LB_NAME" >> $GITHUB_ENV
+        NAMESPACE=$(jq -r '.metadata.namespace' loadbalancer.json)
+        echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
+  
+        URL="${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/http_loadbalancers/$LB_NAME" # Adjust endpoint
+        RESPONSE_CODE=$(curl -o /dev/null -H "Authorization: APIToken $API_TOKEN" -s -w "%{http_code}\n" -X GET "$URL")
+        if [[ "$RESPONSE_CODE" -eq 404 ]]; then
           echo "METHOD=POST" >> $GITHUB_ENV
         else
           echo "METHOD=PUT" >> $GITHUB_ENV
+      env:
+        API_KEY: ${{ secrets.API_TOKEN }}
 
     - name: Post Origin JSON Data
       run: |
-        curl -X $METHOD -H "Content-Type: application/json" -d @origin.json ${{ secrets.ORIGIN_API_ENDPOINT }}
+        ORIGIN_NAME=$(jq -r '.metadata.name' origin.json)
+
+        if [[ $METHOD -eq "POST" ]]; then
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @origin.json ${{ secrets.ORIGIN_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/origin_pools
+        else
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @origin.json ${{ secrets.ORIGIN_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/origin_pools/$ORIGIN_NAME
+        fi
       env:
         API_KEY: ${{ secrets.API_TOKEN }}
 
     - name: Post WAF JSON Data
       run: |
-        curl -X $METHOD -H "Content-Type: application/json" -d @waf.json ${{ secrets.WAF_API_ENDPOINT }}
+        WAF_NAME=$(jq -r '.metadata.name' waf.json)
+
+        if [[ $METHOD -eq "POST" ]]; then
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.WAF_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls
+        else
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.WAF_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls/$WAF_NAME
+        fi
       env:
         API_KEY: ${{ secrets.API_TOKEN }}
 
     - name: Post 2nd WAF JSON Data
       run: |
-        curl -X $METHOD -H "Content-Type: application/json" -d @drupal-waf.json ${{ secrets.WAF_API_ENDPOINT }}
+        WAF2_NAME=$(jq -r '.metadata.name' drupal-waf.json)
+
+        if [[ $METHOD -eq "POST" ]]; then
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.WAF_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls
+        else
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.WAF_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls/$WAF2_NAME
+        fi
       env:
         API_KEY: ${{ secrets.API_TOKEN }}
 
     - name: Post Load Balancer JSON Data
       run: |
-        curl -X $METHOD -H "Content-Type: application/json" -d @loadbalancer.json ${{ secrets.LB_API_ENDPOINT }}
+        if [[ $METHOD -eq "POST" ]]; then
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @loadbalancer.json ${{ secrets.LB_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/http_loadbalancers
+        else
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @loadbalancer.json ${{ secrets.LB_API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/http_loadbalancers/$LB_NAME
+        fi
       env:
         API_KEY: ${{ secrets.API_TOKEN }}

@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "name": "dummy-f5-sa-myedgedemo-com",
+        "name": "ci-example-myedgedemo-com",
         "namespace": "m-coleman",
         "labels": {},
         "annotations": {},
@@ -8,7 +8,7 @@
     },
     "spec": {
         "domains": [
-            "dummy.f5-sa.myedgedemo.com"
+            "ci-example.myedgedemo.com"
         ],
         "https_auto_cert": {
             "http_redirect": true,
