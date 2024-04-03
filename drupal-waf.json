@@ -4,6 +4,7 @@
         "namespace": "m-coleman",
         "labels": {},
         "annotations": {},
+        "description": "Created via Pipeline",
         "disable": false
     },
     "spec": {
