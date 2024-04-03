@@ -1,6 +1,8 @@
-## XC Continuous Integration using Github Actions Example
+# XC Continuous Integration using Github Actions Example
 
 This repo demonstrates how to use Github as a CI platform to maintain version control of your F5 Distributed Cloud Configurations.
+
+This repo does not cover additional more complex scenarios in an actions workload pipeing like if, continue-on-error, etc.
 
 ## Getting Started
 
