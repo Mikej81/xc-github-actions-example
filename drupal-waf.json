@@ -1,0 +1,17 @@
+{
+    "metadata": {
+        "name": "drupal-waf-example",
+        "namespace": "m-coleman",
+        "labels": {},
+        "annotations": {},
+        "disable": false
+    },
+    "spec": {
+        "blocking": {},
+        "default_detection_settings": {},
+        "default_bot_setting": {},
+        "allow_all_response_codes": {},
+        "default_anonymization": {},
+        "use_default_blocking_page": {}
+    }
+}

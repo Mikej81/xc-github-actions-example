@@ -1,0 +1,617 @@
+{
+    "metadata": {
+        "name": "dummy-f5-sa-myedgedemo-com",
+        "namespace": "m-coleman",
+        "labels": {},
+        "annotations": {},
+        "disable": false
+    },
+    "spec": {
+        "domains": [
+            "dummy.f5-sa.myedgedemo.com"
+        ],
+        "https_auto_cert": {
+            "http_redirect": true,
+            "add_hsts": true,
+            "port": 443,
+            "tls_config": {
+                "default_security": {}
+            },
+            "no_mtls": {},
+            "default_header": {},
+            "enable_path_normalize": {},
+            "non_default_loadbalancer": {},
+            "header_transformation_type": {
+                "default_header_transformation": {}
+            },
+            "connection_idle_timeout": 0
+        },
+        "downstream_tls_certificate_expiration_timestamps": [
+            {}
+        ],
+        "advertise_on_public_default_vip": {},
+        "default_route_pools": [],
+        "routes": [
+            {
+                "redirect_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "path": "/"
+                    },
+                    "headers": [
+                        {
+                            "name": "Accept-Language",
+                            "regex": "([eE][nN]-[uU][sS].*$)",
+                            "invert_match": false
+                        }
+                    ],
+                    "route_redirect": {
+                        "proto_redirect": "incoming-proto",
+                        "host_redirect": "dummy.f5-sa.myedgedemo.com",
+                        "path_redirect": "/en-us/",
+                        "response_code": 301,
+                        "retain_all_params": {},
+                        "port_redirect": 0
+                    }
+                }
+            },
+            {
+                "redirect_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "path": "/"
+                    },
+                    "headers": [
+                        {
+                            "name": "Accept-Language",
+                            "regex": "([eE][sS]-[0-9].*$)",
+                            "invert_match": false
+                        }
+                    ],
+                    "route_redirect": {
+                        "proto_redirect": "incoming-proto",
+                        "host_redirect": "dummy.f5-sa.myedgedemo.com",
+                        "path_redirect": "/es",
+                        "response_code": 301,
+                        "retain_all_params": {},
+                        "port_redirect": 0
+                    }
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/en-us/"
+                    },
+                    "headers": [],
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "host_rewrite": "coleman.myedgedemo.com"
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/es/"
+                    },
+                    "headers": [],
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "auto_host_rewrite": {}
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/written/"
+                    },
+                    "headers": [],
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "auto_host_rewrite": {},
+                    "advanced_options": {
+                        "common_hash_policy": {},
+                        "priority": "DEFAULT",
+                        "endpoint_subsets": {},
+                        "prefix_rewrite": "/rewritten/",
+                        "request_headers_to_add": [],
+                        "request_headers_to_remove": [],
+                        "response_headers_to_add": [],
+                        "response_headers_to_remove": [],
+                        "disable_location_add": false,
+                        "app_firewall": {
+                            "namespace": "m-coleman",
+                            "name": "drupal-waf-example",
+                            "kind": "app_firewall"
+                        },
+                        "disable_spdy": {},
+                        "disable_web_socket_config": {},
+                        "default_retry_policy": {},
+                        "timeout": 30000,
+                        "common_buffering": {},
+                        "disable_mirroring": {},
+                        "retract_cluster": {}
+                    }
+                }
+            },
+            {
+                "direct_response_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/thanks"
+                    },
+                    "headers": [],
+                    "route_direct_response": {
+                        "response_code": 200,
+                        "response_body": "You're Welcome."
+                    }
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/"
+                    },
+                    "headers": [
+                        {
+                            "name": "WWW-Authenticate",
+                            "regex": "(.*[nN][tT][lL][mM].*)",
+                            "invert_match": false
+                        }
+                    ],
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "auto_host_rewrite": {},
+                    "advanced_options": {
+                        "common_hash_policy": {},
+                        "priority": "DEFAULT",
+                        "endpoint_subsets": {},
+                        "disable_prefix_rewrite": {},
+                        "request_headers_to_add": [],
+                        "request_headers_to_remove": [],
+                        "response_headers_to_add": [
+                            {
+                                "name": "WWW-Authenticate",
+                                "value": "Negotiate",
+                                "append": false
+                            }
+                        ],
+                        "response_headers_to_remove": [],
+                        "disable_location_add": false,
+                        "inherited_waf": {},
+                        "disable_spdy": {},
+                        "disable_web_socket_config": {},
+                        "default_retry_policy": {},
+                        "timeout": 30000,
+                        "common_buffering": {},
+                        "disable_mirroring": {},
+                        "retract_cluster": {}
+                    }
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "GET",
+                    "path": {
+                        "regex": ".*(.jpg|.png|.gif)"
+                    },
+                    "headers": [],
+                    "incoming_port": {
+                        "no_port_match": {}
+                    },
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "auto_host_rewrite": {},
+                    "advanced_options": {
+                        "common_hash_policy": {},
+                        "priority": "DEFAULT",
+                        "endpoint_subsets": {},
+                        "disable_prefix_rewrite": {},
+                        "request_headers_to_add": [],
+                        "request_headers_to_remove": [],
+                        "response_headers_to_add": [
+                            {
+                                "name": "Cache-Control",
+                                "value": "no-store, no-cache, must-revalidate, max-age=0",
+                                "append": false
+                            },
+                            {
+                                "name": "Set-Cookie",
+                                "value": "colemanCookie=true",
+                                "append": true
+                            },
+                            {
+                                "name": "X-Frame-Options",
+                                "value": "SAMEORIGIN",
+                                "append": true
+                            }
+                        ],
+                        "response_headers_to_remove": [],
+                        "disable_location_add": false,
+                        "inherited_waf": {},
+                        "disable_spdy": {},
+                        "disable_web_socket_config": {},
+                        "default_retry_policy": {},
+                        "timeout": 30000,
+                        "common_buffering": {},
+                        "disable_mirroring": {},
+                        "retract_cluster": {},
+                        "inherited_bot_defense_javascript_injection": {}
+                    }
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/login/"
+                    },
+                    "headers": [],
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "auto_host_rewrite": {}
+                }
+            },
+            {
+                "redirect_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/"
+                    },
+                    "headers": [
+                        {
+                            "name": "geo-country",
+                            "exact": "US",
+                            "invert_match": false
+                        }
+                    ],
+                    "route_redirect": {
+                        "proto_redirect": "incoming-proto",
+                        "host_redirect": "layered.f5-sa.myedgedemo.com",
+                        "path_redirect": "/us/",
+                        "response_code": 301,
+                        "retain_all_params": {},
+                        "port_redirect": 0
+                    }
+                }
+            },
+            {
+                "simple_route": {
+                    "http_method": "ANY",
+                    "path": {
+                        "prefix": "/chodes"
+                    },
+                    "headers": [],
+                    "incoming_port": {
+                        "no_port_match": {}
+                    },
+                    "origin_pools": [
+                        {
+                            "pool": {
+                                "namespace": "m-coleman",
+                                "name": "origin-example",
+                                "kind": "origin_pool"
+                            },
+                            "weight": 1,
+                            "priority": 1,
+                            "endpoint_subsets": {}
+                        }
+                    ],
+                    "auto_host_rewrite": {}
+                }
+            }
+        ],
+        "cors_policy": {
+            "allow_origin": [
+                "raw.githubusercontent.com"
+            ],
+            "allow_origin_regex": [],
+            "allow_methods": "GET",
+            "maximum_age": 0,
+            "allow_credentials": false,
+            "disabled": false
+        },
+        "app_firewall": {
+            "namespace": "m-coleman",
+            "name": "demo-waf",
+            "kind": "app_firewall"
+        },
+        "add_location": true,
+        "enable_challenge": {
+            "default_mitigation_settings": {},
+            "default_js_challenge_parameters": {},
+            "default_captcha_challenge_parameters": {}
+        },
+        "more_option": {
+            "request_headers_to_add": [],
+            "request_headers_to_remove": [],
+            "response_headers_to_add": [
+                {
+                    "name": "Access-Control-Allow-Origin",
+                    "value": "*",
+                    "append": true
+                },
+                {
+                    "name": "Set-Cookie",
+                    "value": "colemanCookie=true",
+                    "append": true
+                },
+                {
+                    "name": "X-Frame-Options",
+                    "value": "SAMEORIGIN",
+                    "append": true
+                },
+                {
+                    "name": "X-Content-Type-Options",
+                    "value": "nosniff",
+                    "append": true
+                },
+                {
+                    "name": "Content-Security-Policy",
+                    "value": "frame-ancestors 'self' https://dummy.f5-sa.myedgedemo.com",
+                    "append": false
+                }
+            ],
+            "response_headers_to_remove": [],
+            "max_request_header_size": 60,
+            "custom_errors": {},
+            "idle_timeout": 30000,
+            "disable_default_error_pages": false,
+            "cookies_to_modify": []
+        },
+        "user_identification": {},
+        "api_rate_limit": {
+            "no_ip_allowed_list": {},
+            "server_url_rules": [],
+            "api_endpoint_rules": []
+        },
+        "waf_exclusion_rules": [],
+        "data_guard_rules": [
+            {
+                "metadata": {
+                    "name": "dataguard-rule",
+                    "disable": false
+                },
+                "apply_data_guard": {},
+                "any_domain": {},
+                "path": {
+                    "prefix": "/"
+                }
+            }
+        ],
+        "blocked_clients": [],
+        "trusted_clients": [],
+        "api_protection_rules": {
+            "api_endpoint_rules": [
+                {
+                    "metadata": {
+                        "name": "everything",
+                        "disable": false
+                    },
+                    "action": {
+                        "allow": {}
+                    },
+                    "any_domain": {},
+                    "api_endpoint_path": "/",
+                    "api_endpoint_method": {
+                        "methods": [
+                            "ANY"
+                        ],
+                        "invert_matcher": false
+                    },
+                    "client_matcher": {
+                        "any_client": {},
+                        "any_ip": {},
+                        "tls_fingerprint_matcher": {
+                            "classes": [],
+                            "exact_values": [],
+                            "excluded_values": []
+                        }
+                    }
+                }
+            ],
+            "api_groups_rules": [
+                {
+                    "metadata": {
+                        "name": "everything-groups",
+                        "disable": false
+                    },
+                    "action": {
+                        "allow": {}
+                    },
+                    "any_domain": {},
+                    "base_path": "/",
+                    "api_group": "ves-io-api-def-mc-everything-base-urls",
+                    "client_matcher": {
+                        "any_client": {},
+                        "any_ip": {},
+                        "tls_fingerprint_matcher": {
+                            "classes": [],
+                            "exact_values": [],
+                            "excluded_values": []
+                        }
+                    }
+                }
+            ]
+        },
+        "ddos_mitigation_rules": [],
+        "no_service_policies": {},
+        "source_ip_stickiness": {},
+        "disable_trust_client_ip_headers": {},
+        "enable_ddos_detection": {
+            "enable_auto_mitigation": {
+                "block": {}
+            }
+        },
+        "enable_malicious_user_detection": {},
+        "enable_api_discovery": {
+            "enable_learn_from_redirect_traffic": {},
+            "discovered_api_settings": {
+                "purge_duration_for_inactive_discovered_apis": 2
+            }
+        },
+        "bot_defense": {
+            "regional_endpoint": "US",
+            "policy": {
+                "protected_app_endpoints": [
+                    {
+                        "metadata": {
+                            "name": "login",
+                            "disable": false
+                        },
+                        "http_methods": [
+                            "METHOD_POST"
+                        ],
+                        "undefined_flow_label": {},
+                        "protocol": "BOTH",
+                        "any_domain": {},
+                        "path": {
+                            "prefix": "/login/"
+                        },
+                        "web": {},
+                        "mitigation": {
+                            "block": {
+                                "status": "OK",
+                                "body": "string:///VGhlIHJlcXVlc3RlZCBVUkwgd2FzIHJlamVjdGVkLiBQbGVhc2UgY29uc3VsdCB3aXRoIHlvdXIgYWRtaW5pc3RyYXRvci4="
+                            }
+                        },
+                        "mitigate_good_bots": {}
+                    },
+                    {
+                        "metadata": {
+                            "name": "web-scraping",
+                            "disable": false
+                        },
+                        "http_methods": [
+                            "METHOD_GET_DOCUMENT"
+                        ],
+                        "flow_label": {
+                            "search": {
+                                "product_search": {}
+                            }
+                        },
+                        "protocol": "BOTH",
+                        "any_domain": {},
+                        "path": {
+                            "prefix": "/en-us/"
+                        },
+                        "web": {},
+                        "mitigation": {
+                            "block": {
+                                "status": "OK",
+                                "body": "string:///VGhlIHJlcXVlc3RlZCBVUkwgd2FzIHJlamVjdGVkLCBCb3QhIFBsZWFzZSBjb25zdWx0IHdpdGggeW91ciBhZG1pbmlzdHJhdG9yLg=="
+                            }
+                        },
+                        "mitigate_good_bots": {}
+                    }
+                ],
+                "js_insert_all_pages": {
+                    "javascript_location": "AFTER_HEAD"
+                },
+                "js_download_path": "/common.js",
+                "javascript_mode": "ASYNC_JS_NO_CACHING",
+                "disable_mobile_sdk": {}
+            },
+            "timeout": 1000,
+            "disable_cors_support": {}
+        },
+        "api_specification": {
+            "validation_all_spec_endpoints": {
+                "validation_mode": {
+                    "validation_mode_active": {
+                        "enforcement_report": {},
+                        "request_validation_properties": [
+                            "PROPERTY_PATH_PARAMETERS",
+                            "PROPERTY_QUERY_PARAMETERS",
+                            "PROPERTY_HTTP_HEADERS"
+                        ]
+                    },
+                    "skip_response_validation": {}
+                },
+                "fall_through_mode": {
+                    "fall_through_mode_allow": {}
+                },
+                "settings": {
+                    "oversized_body_skip_validation": {},
+                    "property_validation_settings_default": {}
+                }
+            }
+        },
+        "disable_ip_reputation": {},
+        "client_side_defense": {
+            "policy": {
+                "js_insert_all_pages": {}
+            }
+        },
+        "internet_vip_info": [],
+        "slow_ddos_mitigation": {
+            "request_headers_timeout": 10000,
+            "request_timeout": 60000
+        },
+        "l7_ddos_action_default": {}
+    }
+}
