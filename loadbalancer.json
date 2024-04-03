@@ -445,59 +445,6 @@
         ],
         "blocked_clients": [],
         "trusted_clients": [],
-        "api_protection_rules": {
-            "api_endpoint_rules": [
-                {
-                    "metadata": {
-                        "name": "everything",
-                        "disable": false
-                    },
-                    "action": {
-                        "allow": {}
-                    },
-                    "any_domain": {},
-                    "api_endpoint_path": "/",
-                    "api_endpoint_method": {
-                        "methods": [
-                            "ANY"
-                        ],
-                        "invert_matcher": false
-                    },
-                    "client_matcher": {
-                        "any_client": {},
-                        "any_ip": {},
-                        "tls_fingerprint_matcher": {
-                            "classes": [],
-                            "exact_values": [],
-                            "excluded_values": []
-                        }
-                    }
-                }
-            ],
-            "api_groups_rules": [
-                {
-                    "metadata": {
-                        "name": "everything-groups",
-                        "disable": false
-                    },
-                    "action": {
-                        "allow": {}
-                    },
-                    "any_domain": {},
-                    "base_path": "/",
-                    "api_group": "ves-io-api-def-mc-everything-base-urls",
-                    "client_matcher": {
-                        "any_client": {},
-                        "any_ip": {},
-                        "tls_fingerprint_matcher": {
-                            "classes": [],
-                            "exact_values": [],
-                            "excluded_values": []
-                        }
-                    }
-                }
-            ]
-        },
         "ddos_mitigation_rules": [],
         "no_service_policies": {},
         "source_ip_stickiness": {},
