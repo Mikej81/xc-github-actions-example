@@ -32,6 +32,7 @@ jobs:
           echo "METHOD=POST" >> $GITHUB_ENV
         else
           echo "METHOD=PUT" >> $GITHUB_ENV
+        fi
       env:
         API_KEY: ${{ secrets.API_TOKEN }}
 
