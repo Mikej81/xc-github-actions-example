@@ -424,11 +424,6 @@
             "disable_default_error_pages": false,
             "cookies_to_modify": []
         },
-        "api_rate_limit": {
-            "no_ip_allowed_list": {},
-            "server_url_rules": [],
-            "api_endpoint_rules": []
-        },
         "waf_exclusion_rules": [],
         "data_guard_rules": [
             {
