@@ -12,7 +12,7 @@ Setting up a CI pipeline with GitHub Actions to post JSON data to an API endpoin
 You could also use an existing repository for this.
 
 2. Create a GitHub Actions Workflow
-Next, you need to create a GitHub Actions workflow in your repository. This is done by creating a .yml or .yaml file inside the .github/workflows directory of your repository. I find it easier to start in the Github Actions UI which will build a file with some predefined steps you can build off.
+Next, you need to create a GitHub Actions workflow in your repository. This is done by creating a .yml or .yaml file inside the .github/workflows directory of your repository. I find it easier to start in the Github Actions UI which will build a file with some predefined steps you can build off.  View this repo's actions here [Github Actions](../../wiki)
 
     ![step2.png](images/step2.png)
 
