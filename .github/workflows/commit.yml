@@ -28,7 +28,7 @@ jobs:
   
         URL="${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/http_loadbalancers/$LB_NAME" # Adjust endpoint
         RESPONSE_CODE=$(curl -o /dev/null -H "Authorization: APIToken $API_TOKEN" -s -w "%{http_code}\n" -X GET "$URL")
-        if [[ "$RESPONSE_CODE" -eq 404 ]]; then
+        if [ "$RESPONSE_CODE" -eq 404 ]; then
           echo "METHOD=POST" >> $GITHUB_ENV
         else
           echo "METHOD=PUT" >> $GITHUB_ENV
@@ -40,7 +40,7 @@ jobs:
       run: |
         ORIGIN_NAME=$(jq -r '.metadata.name' origin.json)
 
-        if [[ $METHOD -eq "POST" ]]; then
+        if [[ $METHOD == "POST" ]]; then
           curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @origin.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/origin_pools
         else
           curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @origin.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/origin_pools/$ORIGIN_NAME
@@ -52,7 +52,7 @@ jobs:
       run: |
         WAF_NAME=$(jq -r '.metadata.name' waf.json)
 
-        if [[ $METHOD -eq "POST" ]]; then
+        if [[ $METHOD == "POST" ]]; then
           curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls
         else
           curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls/$WAF_NAME
@@ -64,17 +64,17 @@ jobs:
       run: |
         WAF2_NAME=$(jq -r '.metadata.name' drupal-waf.json)
 
-        if [[ $METHOD -eq "POST" ]]; then
-          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls
+        if [[ $METHOD == "POST" ]]; then
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @drupal-waf.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls
         else
-          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @waf.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls/$WAF2_NAME
+          curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @drupal-waf.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/app_firewalls/$WAF2_NAME
         fi
       env:
         API_KEY: ${{ secrets.API_TOKEN }}
 
     - name: Post Load Balancer JSON Data
       run: |
-        if [[ $METHOD -eq "POST" ]]; then
+        if [[ $METHOD == "POST" ]]; then
           curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @loadbalancer.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/http_loadbalancers
         else
           curl -X $METHOD -H "Content-Type: application/json" -H "Authorization: APIToken $API_TOKEN" -d @loadbalancer.json ${{ secrets.API_ENDPOINT }}/api/config/namespaces/$NAMESPACE/http_loadbalancers/$LB_NAME
